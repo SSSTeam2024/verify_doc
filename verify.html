@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
@@ -22,19 +27,102 @@
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         text-align: center;
+        position: relative;
+      }
+      .badge-checked {
+        color: #46c346;
+        padding: 1px 5px;
+        font-size: 26px;
+        font-weight: bold;
+        position: absolute;
+        top: 0px;
+        left: 95%;
+        transform: translateX(-50%) scale(0);
+        animation: popIn 0.6s forwards ease-out 1.2s;
+      }
+      @keyframes popIn {
+        from {
+          transform: translateX(-50%) scale(0);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(-50%) scale(1);
+          opacity: 1;
+        }
       }
       .timing {
         font-size: 14px;
         font-weight: bold;
         color: #333;
       }
+      .verification-glow {
+        animation: glowEffect 1s ease-in-out infinite alternate;
+      }
+      @keyframes glowEffect {
+        from {
+          box-shadow: 0 0 10px rgba(70, 195, 70, 0.2);
+        }
+        to {
+          box-shadow: 0 0 20px rgba(70, 195, 70, 0.6);
+        }
+      }
+
+      .verification-glow-error {
+        animation: glowRed 1s ease-in-out infinite alternate;
+      }
+
+      @keyframes glowRed {
+        from {
+          box-shadow: 0 0 10px rgba(195, 70, 70, 0.2);
+        }
+        to {
+          box-shadow: 0 0 20px rgba(195, 70, 70, 0.6);
+        }
+      }
+
+      .slide-in {
+        transform: translateX(-50px);
+        opacity: 0;
+        animation: slideIn 0.8s forwards ease-out 0.8s;
+      }
+      @keyframes slideIn {
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      #bigDiv h4 {
+        font-size: 3rem;
+        text-align: center;
+        animation: fadeIn 1.5s ease-in-out, bounce 0.8s infinite alternate;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes bounce {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-10px);
+        }
+      }
     </style>
   </head>
   <body>
     <div id="bigDiv" class="verification-container">
-      <div id="typeDocument"></div>
-      <div id="perso"></div>
-      <div id="dateCreation"></div>
+      <div id="typeDocument">
+        <span id="badge"></span>
+      </div>
+      <div id="perso" class="slide-in"></div>
+      <div id="dateCreation" class="slide-in"></div>
     </div>
   </body>
   <script>
@@ -63,8 +151,11 @@
           const formattedTime = `${hours}:${minutes}`;
           let content = document.getElementById("bigDiv");
           let typeDocument = document.getElementById("typeDocument");
-          typeDocument.innerHTML = "<h4>" + data[0].model.title + "</h4>";
-
+          let badgeChecked = document.getElementById("badge");
+          badgeChecked.innerHTML = "<i class='bi bi-check-circle-fill'></i>";
+          badgeChecked.classList.add("badge-checked");
+          typeDocument.innerHTML = "<h3>" + data[0].model.title + "</h3>";
+          typeDocument.appendChild(badgeChecked);
           let dateCreation = document.getElementById("dateCreation");
           dateCreation.innerHTML =
             "<div><span><strong>" +
@@ -96,7 +187,14 @@
           }
         } else {
           let content = document.getElementById("bigDiv");
-          content.innerHTML = "<h4>404 Not Found</h4>";
+          content.classList.add("verification-glow-error");
+          badge.innerHTML = "❌";
+          badge.style.color = "#c34646";
+
+          // No valid data
+          typeDocument.innerHTML = "<h4>La vérification a échoué</h4>";
+          perso.innerHTML = "<p>Aucune donnée valable trouvée</p>";
+          dateCreation.innerHTML = "";
         }
       });
     }
@@ -110,5 +208,12 @@
       geDocDetails(hiddenId);
       trackingId = hiddenId;
     };
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      setTimeout(() => {
+        document.getElementById("bigDiv").classList.add("verification-glow");
+      }, 2000);
+    });
   </script>
 </html>
