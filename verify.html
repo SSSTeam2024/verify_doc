@@ -3,9 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <title>Document</title>
+    <style>
+      body {
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .verification-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .timing {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
   </head>
   <body>
-    Hello Verify
+    <div id="bigDiv" class="verification-container">
+      <div id="typeDocument"></div>
+      <div id="perso"></div>
+      <div id="dateCreation"></div>
+    </div>
   </body>
+  <script>
+    async function geDocDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+
+      const response = await fetch(
+        `http://57.129.38.15:7000/api/generated-doc/get-generated-doc-by-qr-code/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      response.json().then((data) => {
+        if (data.length !== 0) {
+          const createdAt = data[0].createdAt;
+          const date = new Date(createdAt);
+          const hours = date.getHours().toString().padStart(2, "0");
+          const minutes = date.getMinutes().toString().padStart(2, "0");
+
+          const formattedTime = `${hours}:${minutes}`;
+          let content = document.getElementById("bigDiv");
+          let typeDocument = document.getElementById("typeDocument");
+          typeDocument.innerHTML = "<h4>" + data[0].model.title + "</h4>";
+
+          let dateCreation = document.getElementById("dateCreation");
+          dateCreation.innerHTML =
+            "<div><span><strong>" +
+            data[0].date_generation +
+            "</strong></span> <span>à <span class=timing>" +
+            formattedTime +
+            "</span></span></div> ";
+          let perso = document.getElementById("perso");
+          if (data[0].etudiant !== null) {
+            perso.innerHTML =
+              "<strong>" +
+              data[0].etudiant.prenom_fr +
+              data[0].etudiant.nom_fr +
+              "</strong>";
+          }
+          if (data[0].enseignant !== null) {
+            perso.innerHTML =
+              "<strong>" +
+              data[0].enseignant.prenom_fr +
+              data[0].enseignant.nom_fr +
+              "</strong>";
+          }
+          if (data[0].personnel !== null) {
+            perso.innerHTML =
+              "<strong>" +
+              data[0].personnel.prenom_fr +
+              data[0].personnel.nom_fr +
+              "</strong>";
+          }
+        } else {
+          let content = document.getElementById("bigDiv");
+          content.innerHTML = "<h4>404 Not Found</h4>";
+        }
+      });
+    }
+
+    window.onload = function getPaymentData() {
+      const currentUrl = window.location.href;
+      console.log(currentUrl);
+      const urlParams = new URLSearchParams(window.location.search);
+      const hiddenId = urlParams.get("id");
+      console.log(hiddenId);
+      geDocDetails(hiddenId);
+      trackingId = hiddenId;
+    };
+  </script>
 </html>
