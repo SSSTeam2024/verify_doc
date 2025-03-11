@@ -118,6 +118,7 @@
   </head>
   <body>
     <div id="bigDiv" class="verification-container">
+      <div id="documentConfirmed"></div>
       <div id="typeDocument">
         <span id="badge"></span>
       </div>
@@ -150,40 +151,37 @@
 
           const formattedTime = `${hours}:${minutes}`;
           let content = document.getElementById("bigDiv");
+
+          let documentConfirmed = document.getElementById("documentConfirmed");
+          documentConfirmed.innerHTML = "<h2>Document Confirmé</h2>";
           let typeDocument = document.getElementById("typeDocument");
           let badgeChecked = document.getElementById("badge");
           badgeChecked.innerHTML = "<i class='bi bi-check-circle-fill'></i>";
           badgeChecked.classList.add("badge-checked");
-          typeDocument.innerHTML = "<h3>" + data[0].model.title + "</h3>";
+          typeDocument.innerHTML = `<span style="font-size: 14px; font-weight: 700;">Type: </span>
+        <span style="font-size: 18px; font-weight: bold;">${data[0].model.title}
+    </span>`;
           typeDocument.appendChild(badgeChecked);
+
           let dateCreation = document.getElementById("dateCreation");
-          dateCreation.innerHTML =
-            "<div><span><strong>" +
-            data[0].date_generation +
-            "</strong></span> <span>à <span class=timing>" +
-            formattedTime +
-            "</span></span></div> ";
+          dateCreation.innerHTML = `<div><span style="font-size: 14px; font-weight: 700;">Date Création: </span><span style="font-size: 16px; font-weight: 900;">${data[0].date_generation}</span> <span>à <span class="timing">${formattedTime}</span></span></div>`;
+
           let perso = document.getElementById("perso");
           if (data[0].etudiant !== null) {
-            perso.innerHTML =
-              "<strong>" +
-              data[0].etudiant.prenom_fr +
-              data[0].etudiant.nom_fr +
-              "</strong>";
+            perso.innerHTML = `<span style="font-size: 14px; font-weight: 700;">Nom: </span> <span style="font-size: 18px; font-weight: bold;">${data[0].etudiant.prenom_fr} 
+              ${data[0].etudiant.nom_fr} 
+              </span>`;
           }
           if (data[0].enseignant !== null) {
             perso.innerHTML =
-              "<strong>" +
-              data[0].enseignant.prenom_fr +
-              data[0].enseignant.nom_fr +
-              "</strong>";
+              perso.innerHTML = `<span style="font-size: 14px; font-weight: 700;">Nom: </span> <span style="font-size: 18px; font-weight: bold;">${data[0].enseignant.prenom_fr} 
+              ${data[0].enseignant.nom_fr} 
+              </span>`;
           }
           if (data[0].personnel !== null) {
-            perso.innerHTML =
-              "<strong>" +
-              data[0].personnel.prenom_fr +
-              data[0].personnel.nom_fr +
-              "</strong>";
+            perso.innerHTML = `<span style="font-size: 14px; font-weight: 700;">Nom: </span> <span style="font-size: 18px; font-weight: bold;">${data[0].personnel.prenom_fr} 
+              ${data[0].personnel.nom_fr} 
+              </span>`;
           }
         } else {
           let content = document.getElementById("bigDiv");
